@@ -18,24 +18,21 @@ function App() {
       } catch (err) {
         console.log(err.message);
         setError(err.message);
+      } finally {
         setCargando(false);
       }
     }
     obtenerProductos();
   }, []);
 
+  if (error) {
+    return <p>Error: {error}</p>
+  }
+
   return (
     <>
       <h1>Productos</h1>
-      {error && <p>Error: {error}</p>}
-      {cargando ? (
-        <p>Cargando...</p>
-      ) : (
-        PRODUCTS.map(function (product) {
-          return <div>{product.name} - </div>;
-        })
-      )}
-      {/* <FilterableProductTable products={PRODUCTS} /> */}
+      {cargando ? <p>Cargando...</p> : <FilterableProductTable products={PRODUCTS} /> }
     </>
   );
 }
