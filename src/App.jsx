@@ -1,14 +1,43 @@
-const PRODUCTS = [
-  {category: "Frutas", price: "$1", stocked: true, name: "Manzana"},
-  {category: "Frutas", price: "$1", stocked: true, name: "Fruta del dragón"},
-  {category: "Frutas", price: "$2", stocked: false, name: "Maracuyá"},
-  {category: "Verduras", price: "$2", stocked: true, name: "Espinaca"},
-  {category: "Verduras", price: "$4", stocked: false, name: "Calabaza"},
-  {category: "Verduras", price: "$1", stocked: true, name: "Guisantes"}
-];
+import { useEffect, useState } from "react";
+import FilterableProductTable from "./components/FilterableProductTable";
 
 function App() {
-  return <FilterableProductTable products={PRODUCTS} />;
+  const [PRODUCTS, setProducts] = useState(null);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(function () {
+    async function obtenerProductos() {
+      try {
+        // Obtener mediante fetch
+        const respuesta = await fetch("/api.json");
+        const datos = await respuesta.json();
+
+        setProducts(datos);
+        setCargando(false);
+      } catch (err) {
+        console.log(err.message);
+        setError(err.message);
+        setCargando(false);
+      }
+    }
+    obtenerProductos();
+  }, []);
+
+  return (
+    <>
+      <h1>Productos</h1>
+      {error && <p>Error: {error}</p>}
+      {cargando ? (
+        <p>Cargando...</p>
+      ) : (
+        PRODUCTS.map(function (product) {
+          return <div>{product.name} - </div>;
+        })
+      )}
+      {/* <FilterableProductTable products={PRODUCTS} /> */}
+    </>
+  );
 }
 
 export default App;
